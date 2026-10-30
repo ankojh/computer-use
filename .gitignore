@@ -1,0 +1,16 @@
+/target
+swift/**/.build/
+swift/**/.swiftpm/
+tools/**/.build/
+tools/**/.swiftpm/
+.DS_Store
+
+# Local credentials and signing material must never be published.
+.env
+.env.*
+!.env.example
+!.env.sample
+*.key
+*.pem
+*.p12
+*.pfx

@@ -1,0 +1,4 @@
+module CCu [system] {
+    header "cu.h"
+    export *
+}

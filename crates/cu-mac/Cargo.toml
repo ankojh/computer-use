@@ -1,0 +1,20 @@
+[package]
+name = "cu-mac"
+description = "Safe macOS platform implementation over the CuMac Swift layer"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+cu-core.workspace = true
+cu-mac-sys.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+cu-providers.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true

@@ -1,0 +1,23 @@
+{
+  "name": "observe-demo",
+  "turns": [
+    {
+      "text": "Opening Spotlight and searching for Calculator.",
+      "actions": [
+        {"type": "key", "combo": "cmd+space"},
+        {"type": "type", "text": "Calculator"},
+        {"type": "key", "combo": "Return"},
+        {"type": "screenshot"}
+      ]
+    },
+    {
+      "text": "Checking where the cursor is and zooming into the top-left corner.",
+      "actions": [
+        {"type": "cursor_position"},
+        {"type": "zoom", "region": {"x0": 0, "y0": 0, "x1": 480, "y1": 310}},
+        {"type": "click", "at": {"x": 720, "y": 465}}
+      ]
+    }
+  ],
+  "final_text": "Demo script finished."
+}

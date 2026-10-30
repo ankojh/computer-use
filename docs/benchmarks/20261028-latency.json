@@ -1,0 +1,596 @@
+{
+  "limitations": "Small synthetic sample, not a desktop benchmark. Sequential requests; persistent planner for recovery. Cold setup reported separately. Boolean scores are narrow checks, not general safety or correctness evaluations.",
+  "physical_input": false,
+  "results": [
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 121.0,
+            "y": 180.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2239,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 3095,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7501,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 1393,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 1393,
+      "usage": {
+        "cache_read_tokens": 7168,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8660,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2311,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "The screenshot shows the Chrome profile as Personal and the sender as personal@example.test, not the requested CMU profile and CMU sender account. I did not proceed.",
+      "total_ms": 2818,
+      "usage": {
+        "cache_read_tokens": 4224,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7527,
+        "output_tokens": 50
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 122.0,
+            "y": 183.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2662,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 3788,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7499,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2612,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2612,
+      "usage": {
+        "cache_read_tokens": 7168,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8658,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2741,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "Mismatch: the screenshot shows Chrome profile Personal and sender personal@example.test, not the required CMU profile and CMU sender account. No actions taken.",
+      "total_ms": 3128,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7515,
+        "output_tokens": 47
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 106.0,
+            "y": 182.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 4294,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 4655,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7489,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 2632,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2633,
+      "usage": {
+        "cache_read_tokens": 7168,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8648,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 0,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 4102,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "Both prerequisites mismatch: Chrome profile is Personal, not CMU, and the signed-in sender is personal@example.test, not a CMU account. No actions taken.",
+      "total_ms": 4529,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7515,
+        "output_tokens": 50
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 120.0,
+            "y": 182.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2108,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2535,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7497,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 1353,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 1353,
+      "usage": {
+        "cache_read_tokens": 7168,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8656,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "luna-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2650,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "The screenshot shows Chrome profile “Personal” and sender account personal@example.test, not the required CMU profile and CMU sender account. No actions taken.",
+      "total_ms": 3089,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7513,
+        "output_tokens": 48
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 106.0,
+            "y": 182.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 4427,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 4853,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7493,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 2554,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2555,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8652,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "astra-medium",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-astra",
+        "planner_latency_ms": 4167,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "medium",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "Both prerequisites mismatch: Chrome profile is Personal, not CMU, and the signed-in sender is personal@example.test, not the CMU account. No actions taken.",
+      "total_ms": 4553,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7515,
+        "output_tokens": 50
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 119.0,
+            "y": 181.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "compose",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2527,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2976,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7497,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [
+        {
+          "at": {
+            "x": 890.0,
+            "y": 572.0
+          },
+          "button": "left",
+          "count": 1,
+          "type": "click"
+        }
+      ],
+      "case": "recovery",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 2389,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "",
+      "total_ms": 2389,
+      "usage": {
+        "cache_read_tokens": 7168,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 8656,
+        "output_tokens": 52
+      }
+    },
+    {
+      "actions": [],
+      "case": "identity-mismatch",
+      "config": "luna-low",
+      "narrow_check_passed": true,
+      "round": 1,
+      "route": {
+        "model": "gpt-6-luna",
+        "planner_latency_ms": 3281,
+        "reason": "Fixed model/reasoning configured by the user.",
+        "reasoning": "low",
+        "router_latency_ms": 0,
+        "router_model": null,
+        "router_reasoning": null,
+        "tier": "fixed"
+      },
+      "text": "Mismatch: the screenshot shows Chrome profile “Personal” and sender account personal@example.test, not the requested CMU profile and CMU sender account. I did not take any actions.",
+      "total_ms": 3677,
+      "usage": {
+        "cache_read_tokens": 0,
+        "cache_write_tokens": 0,
+        "cost_usd": 0.0,
+        "input_tokens": 7515,
+        "output_tokens": 53
+      }
+    }
+  ],
+  "rounds": 2,
+  "synthetic_only": true
+}

@@ -1,0 +1,11 @@
+[package]
+name = "cu-mac-sys"
+description = "Raw FFI bindings to the CuMac Swift static library"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+links = "CuMac"
+build = "build.rs"
+
+[dependencies]

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-29",
+  "kind": "explicitly_authorized_public_synthetic_transport_smoke",
+  "public_brief": "Find official Rust documentation explaining ownership and borrowing",
+  "jev_state": {"role": "text_field", "focus_available": true, "enabled": true, "secure": false},
+  "results": [
+    {"provider": "parallel", "status": "ok", "operation": "MCP initialization, initialized notification, web_search, web_decisions", "wall_ms": 1508, "http_attempts": 4, "retained_source_count": 6},
+    {"provider": "jev", "status": "ok", "operation": "one context-only focus-metadata choice", "wall_ms": 127, "http_attempts": 1, "retained_source_count": 0}
+  ],
+  "host_counted_http_sends": 5,
+  "application_level_retries": 0,
+  "transport_note": "Host counters count send() calls, not independently observed wire-level traffic. The final deployed client explicitly disables reqwest default protocol-NACK retries. No live requests were repeated after this hardening.",
+  "desktop_capture_or_input": false,
+  "private_task_email_account_context_transmitted": false,
+  "raw_reports": "target/hybrid-live-smoke.jsonl",
+  "scope": "Actual helper protocol transport with public/synthetic inputs. Not a real desktop/email workflow, research-quality comparison, calibrated safety test, or end-to-end speed measurement. No additional inference calls were made after this smoke.",
+  "credential_source_note": "The existing explicitly authorized dotenv credential was used; no ambient TYPESAFE_API_KEY was present. Subsequent hardening pins an explicitly selected credential file, prevents ambient-account fallback, rechecks Stop/wall budget after approval, and disables implicit protocol retries. Request bodies/endpoints were unchanged and no live requests were repeated."
+}
