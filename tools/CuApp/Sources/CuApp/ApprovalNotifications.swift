@@ -63,14 +63,18 @@ struct ApprovalNotificationState {
 
 @MainActor
 final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
+    static let requestsPermissionAtLaunch = false
     private let center: UNUserNotificationCenter
     private let log = Logger(subsystem: "dev.ankojh.cu", category: "ApprovalNotifications")
     private var state = ApprovalNotificationState()
+    private var completionState = CompletionNotificationState()
+    private var completionSubmittedID: String?
     private var submittedID: String?
     private var allowed = false
     private var requesting = false
     var onIntent: ((ApprovalNotificationIntent) -> Void)?
     var onStatus: ((String) -> Void)?
+    var onCompletionOpen: ((UUID) -> Void)?
 
     static func categories() -> Set<UNNotificationCategory> {
         let action = UNNotificationCategory(identifier: "CU_APPROVAL", actions: [
@@ -81,7 +85,8 @@ final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
             UNNotificationAction(identifier: ApprovalNotificationState.approve, title: "Resume", options: [.authenticationRequired]),
             UNNotificationAction(identifier: ApprovalNotificationState.deny, title: "Stop task", options: [.authenticationRequired, .destructive])
         ], intentIdentifiers: [], hiddenPreviewsBodyPlaceholder: "Cu is paused", options: [])
-        return [action, pause]
+        let completion = UNNotificationCategory(identifier: "CU_COMPLETION", actions: [], intentIdentifiers: [], hiddenPreviewsBodyPlaceholder: "Cu task status", options: [])
+        return [action, pause, completion]
     }
     init(center: UNUserNotificationCenter = .current()) {
         self.center = center
@@ -90,32 +95,37 @@ final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
         center.setNotificationCategories(Self.categories())
         // Remove notices from prior launches; they can never authorize this launch.
         let prefix = "cu.approval.\(state.launchID.uuidString)."
+        let completionPrefix = "cu.completion.\(completionState.launchID.uuidString)."
         center.getDeliveredNotifications { [weak self] notices in
-            let old = notices.map(\.request.identifier).filter { $0.hasPrefix("cu.approval.") && !$0.hasPrefix(prefix) }
+            let old = notices.map(\.request.identifier).filter { ($0.hasPrefix("cu.approval.") && !$0.hasPrefix(prefix)) || ($0.hasPrefix("cu.completion.") && !$0.hasPrefix(completionPrefix)) }
             Task { @MainActor in self?.center.removeDeliveredNotifications(withIdentifiers: old) }
         }
         center.getPendingNotificationRequests { [weak self] requests in
-            let old = requests.map(\.identifier).filter { $0.hasPrefix("cu.approval.") && !$0.hasPrefix(prefix) }
+            let old = requests.map(\.identifier).filter { ($0.hasPrefix("cu.approval.") && !$0.hasPrefix(prefix)) || ($0.hasPrefix("cu.completion.") && !$0.hasPrefix(completionPrefix)) }
             Task { @MainActor in self?.center.removePendingNotificationRequests(withIdentifiers: old) }
         }
     }
     func prepare() {
-        refresh(requestIfNeeded: !UserDefaults.standard.bool(forKey: "ApprovalNotificationPermissionAsked"))
+        // Optional notifications are enabled only by the explicit panel button.
+        // Default automatic action execution needs no notification authorization.
+        refresh(requestIfNeeded: Self.requestsPermissionAtLaunch)
     }
     func requestPermission() { refresh(requestIfNeeded: true) }
     func refresh(requestIfNeeded: Bool = false) {
         center.getNotificationSettings { [weak self] settings in
             Task { @MainActor in
                 guard let self else { return }
+                self.log.notice("Notification settings: authorization=\(settings.authorizationStatus.rawValue, privacy: .public) alerts=\(settings.alertSetting == .enabled, privacy: .public)")
                 switch settings.authorizationStatus {
                 case .authorized, .provisional:
                     self.allowed = true
                     self.log.notice("Approval notifications authorized; alerts=\(settings.alertSetting == .enabled, privacy: .public)")
-                    self.onStatus?(settings.alertSetting == .enabled ? "Approval notifications enabled · Approve / Deny in the notification" : "Notification alerts are off in macOS Settings; Cu still waits safely")
+                    self.onStatus?(settings.alertSetting == .enabled ? "Task notifications enabled · finished tasks show a banner" : "macOS notification alerts are off · enable Cu alerts in Notification Settings; Done remains in the menu bar")
                     self.submitCurrent()
+                    self.submitCompletion()
                 case .notDetermined where requestIfNeeded && !self.requesting:
                     self.requesting = true
-                    self.log.notice("Requesting one-time approval notification authorization")
+                    self.log.notice("Explicitly requesting one-time task-notification authorization")
                     UserDefaults.standard.set(true, forKey: "ApprovalNotificationPermissionAsked")
                     do {
                         _ = try await self.center.requestAuthorization(options: [.alert, .sound])
@@ -127,8 +137,10 @@ final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
                     }
                 default:
                     self.allowed = false
-                    self.log.notice("Approval notifications not authorized; pending actions remain blocked")
-                    self.onStatus?("Approval notifications are off · enable Cu in macOS Notification Settings")
+                    self.log.notice("Notifications not authorized; optional notifications unavailable")
+                    self.onStatus?(settings.authorizationStatus == .notDetermined
+                        ? "Completion alerts are not enabled · press Enable completion alerts for the one-time macOS permission."
+                        : "Completion alerts are blocked by macOS · open Notification settings → Cu → Allow notifications. The menu bar still shows Done.")
                 }
             }
         }
@@ -140,7 +152,44 @@ final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
             if let old { remove(old) }
             submittedID = nil
         }
+        let oldCompletion = completionState.current?.identifier
+        completionState.update(session)
+        if oldCompletion != completionState.current?.identifier {
+            if let oldCompletion { remove(oldCompletion) }
+            completionSubmittedID = nil
+        }
+        // Settings may have changed while Cu stayed in the background. Re-read
+        // on a new prompt/outcome, without requesting authorization again.
+        if (old != state.current?.identifier && state.current != nil)
+            || (oldCompletion != completionState.current?.identifier && completionState.current != nil) {
+            refresh()
+        }
         submitCurrent()
+        submitCompletion()
+    }
+    private func submitCompletion() {
+        guard allowed, completionState.canPresent, let notice = completionState.current,
+              completionSubmittedID != notice.identifier else { return }
+        completionSubmittedID = notice.identifier
+        let content = UNMutableNotificationContent()
+        content.title = notice.title
+        content.body = notice.body
+        content.categoryIdentifier = "CU_COMPLETION"
+        content.userInfo = notice.userInfo
+        content.sound = .default
+        content.interruptionLevel = .active
+        center.add(UNNotificationRequest(identifier:notice.identifier,content:content,trigger:nil)) { [weak self] error in
+            Task { @MainActor in
+                guard let self else { return }
+                if self.completionState.current != notice || !self.completionState.canPresent { self.remove(notice.identifier) }
+                else if error != nil {
+                    self.log.error("macOS rejected the task-outcome notification")
+                    self.onStatus?("macOS could not accept the task notification. Check Cu in the menu bar for its outcome.")
+                } else {
+                    self.log.notice("Task-outcome notification accepted by macOS: \(notice.kind.rawValue, privacy: .public)")
+                }
+            }
+        }
     }
     private func submitCurrent() {
         guard allowed, state.canPresent, let notice = state.current, submittedID != notice.identifier else { return }
@@ -167,20 +216,26 @@ final class ApprovalNotifications: NSObject, UNUserNotificationCenterDelegate {
     func shutdown() {
         if let id = state.current?.identifier { remove(id) }
         state = ApprovalNotificationState()
+        if let id = completionState.current?.identifier { remove(id) }
+        completionState = CompletionNotificationState()
     }
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         Task { @MainActor in
-            let valid = self.state.canPresent && self.state.current?.identifier == notification.request.identifier
+            let valid = (self.state.canPresent && self.state.current?.identifier == notification.request.identifier)
+                || (self.completionState.canPresent && self.completionState.current?.identifier == notification.request.identifier)
             completionHandler(valid ? [.banner, .list, .sound] : [])
         }
     }
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         Task { @MainActor in
             let info = response.notification.request.content.userInfo as? [String: String] ?? [:]
-            if let intent = self.state.route(identifier: response.notification.request.identifier, info: info, action: response.actionIdentifier) {
+            if let runID = self.completionState.route(identifier: response.notification.request.identifier, info: info, action: response.actionIdentifier) {
+                self.remove(response.notification.request.identifier)
+                self.onCompletionOpen?(runID)
+            } else if let intent = self.state.route(identifier: response.notification.request.identifier, info: info, action: response.actionIdentifier) {
                 if case .respond = intent { self.remove(response.notification.request.identifier) }
                 self.onIntent?(intent)
-            } else if response.notification.request.identifier.hasPrefix("cu.approval.") {
+            } else if response.notification.request.identifier.hasPrefix("cu.approval.") || response.notification.request.identifier.hasPrefix("cu.completion.") {
                 self.remove(response.notification.request.identifier)
             }
             completionHandler()

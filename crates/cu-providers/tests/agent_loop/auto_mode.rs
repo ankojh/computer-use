@@ -20,6 +20,42 @@ async fn auto_executes_risky_input_and_acknowledges_provider_checks_without_prom
         && e["approved"].is_null()));
 }
 #[tokio::test]
+async fn auto_posts_native_whatsapp_send_without_any_approval_prompt() {
+    let mut h = Harness::new();
+    h.mode = Mode::Auto;
+    h.supervisor.approve = false;
+    *h.platform.focused.lock().unwrap() = Some(cu_core::AxSummary {
+        app: Some(cu_core::AppInfo {
+            pid: 99,
+            bundle_id: Some("net.whatsapp.WhatsApp".into()),
+            name: Some("WhatsApp".into()),
+        }),
+        ..Default::default()
+    });
+    h.platform.elements.lock().unwrap().push((
+        RectP {
+            x: 0.,
+            y: 0.,
+            w: 100.,
+            h: 100.,
+        },
+        AxElement {
+            role: Some("AXButton".into()),
+            title: Some("\u{200e}Send".into()),
+            ..Default::default()
+        },
+    ));
+    let ran = h.run(json!({"turns":[{"actions":[click(10.,10.)]}]})).await;
+    assert_eq!(h.platform.executed().len(), 1);
+    assert_eq!(ran.summary.confirmations, 0);
+    assert_eq!(ran.summary.actions_denied, 0);
+    assert!(h.supervisor.prompts.lock().unwrap().is_empty());
+    assert!(ran
+        .events
+        .iter()
+        .any(|e| e["kind"] == "action_end" && e["consequential_attempted"] == true));
+}
+#[tokio::test]
 async fn automatic_consequential_attempt_never_enables_completion_or_format_replay() {
     for fail in [false, true] {
         for malformed in [false, true] {

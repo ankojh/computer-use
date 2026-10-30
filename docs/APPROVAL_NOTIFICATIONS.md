@@ -1,8 +1,20 @@
 # Critical-only approvals and actionable macOS notifications
 
-## Behavior (introduced in version 12, retained in version 14)
+## Current behavior (version 16)
 
-Current deployment: [version 14](ALLOW_ALL.md), with opt-in **Allow all actions**. That selection skips Cu action/provider-check approvals; Critical actions only remains the default. Stop, human pause, hard denials and macOS permissions remain. At 18:54:43 on 2026-10-29 the actual GUI explicitly logged notifications **not authorized**. Enable Cu in macOS Settings → Notifications for Approve/Deny banners. Accessibility, Screen Recording and Codex readiness are verified true independently; missing notification authorization does not block the planner or panel approval. Version 13 also approval-gates native WhatsApp bare Return/keypad Enter and typed newlines where they may submit a message; ordinary typing and known search navigation remain routine.
+**Allow all actions is now the default**, including Send and after relaunch. This Mac's engine config
+also selects `auto`. No Cu action/provider-check approval prompts and no automatic notification
+permission request on normal launches. Version 16 adds separate completion notifications with no
+approval actions, persistent menu-bar Done/progress and verified-success input clearing. Optional
+notification controls are now visible in auto mode; the explicitly requested update enablement
+uses a one-time launch flag, not a Send approval. Actual GUI authorization is **denied**; enable
+Cu in macOS Notification Settings for banners. See [task status/alerts](TASK_STATUS_NOTIFICATIONS.md)
+and [ALLOW_ALL.md](ALLOW_ALL.md). The confirmation-mode behavior below is retained only for explicit
+cautious-mode selections; it is not the default.
+
+## Version-14 behavior and deployment history (superseded defaults)
+
+Historical deployment: [version 14](ALLOW_ALL.md), with opt-in **Allow all actions**. That selection skips Cu action/provider-check approvals; Critical actions only remains the default. Stop, human pause, hard denials and macOS permissions remain. At 18:54:43 on 2026-10-29 the actual GUI explicitly logged notifications **not authorized**. Enable Cu in macOS Settings → Notifications for Approve/Deny banners. Accessibility, Screen Recording and Codex readiness are verified true independently; missing notification authorization does not block the planner or panel approval. Version 13 also approval-gates native WhatsApp bare Return/keypad Enter and typed newlines where they may submit a message; ordinary typing and known search navigation remain routine.
 
 The native default is **Critical actions only** (`confirm-risky`), not confirm-all. Routine GUI navigation and ordinary typing run without a confirmation. Explicit Send/submit, payment, publishing/sharing, deletion, credential/secret entry, account/permission changes and other consequential or ambiguous high-risk operations remain guarded. Unknown terminal command execution remains approval-gated; this change does not make arbitrary shell commands safe.
 
@@ -29,7 +41,7 @@ macOS may show action buttons only after hovering/expanding the notification. No
 
 ## One-time system permission
 
-macOS notification authorization is needed once; it cannot be bypassed. The first normal version-12 launch requests it if undetermined and not previously requested. It is not requested for each command, each approval, normal subsequent launches, smoke renders or the inert pointer diagnostic.
+macOS notification authorization is needed only to use optional notifications and cannot be bypassed. Since version 15, startup does not request it at all. It is requested only through the explicit Enable notifications button. The old version-12 automatic one-time request is historical, not current behavior.
 
 If denied, Cu does not repeatedly ask or disable ordinary engine readiness. The panel provides **Enable notifications** and **Notification settings**; macOS may require manually enabling Cu after denial. Until allowed, critical actions still wait safely and can be reviewed in Cu. Existing Accessibility and Screen Recording grants are reused; no TCC reset, grant migration or new account/login is performed.
 

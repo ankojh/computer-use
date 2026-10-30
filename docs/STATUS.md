@@ -2,7 +2,58 @@
 
 Milestones from HANDOFF.md §17. Last updated 2026-10-30.
 
-## Version 14 opt-in Allow all actions (installed)
+## Version 16 task status/completion notifications (installed)
+
+- Added separate task-outcome notifications, live menu-bar stage/step/posted-input counts and a
+  persistent **Cu ✓ Done** state only after verified success and engine exit 0. Remaining work is
+  explicitly unknown while working and zero only after verification. No fabricated percentages.
+- The original task input clears only after verified success; failures, Stop, Needs input, unverified
+  completion, edited/new drafts and stale callbacks preserve it. Results/evidence/logs remain.
+- Completion notification body clicks only reveal exact current-run results; no Approve buttons,
+  task text or private results in OS notifications. New task/launch, forged/duplicate/stale responses
+  cannot control a task. Notification settings are freshly checked on new outcomes, so an external
+  Settings change is noticed even while Cu stays in the background. Auto/Send policy is unchanged.
+- **119 Rust tests**, strict all-target Clippy, **81 native passed/1 live metadata skipped**, backend,
+  three Node and signing regressions passed. Ten new outcome/progress/privacy/stale-response/input
+  tests. No desktop input, inference experiment, task replay or Send performed for this update.
+- Installed exact signed `target/Cu-completion-status-staging/Cu.prepared`. App CDHash
+  `b3899cade5f9634c4b60ee4a3c6dc7d82db9e257`, engine unchanged
+  `902043b5cedca26bbddee4fbbc28da9929aef6e1`, same persistent certificate/no TCC reset.
+  Backups: original v15 `target/app-backups/20261030T144854.bZDprp`; initial v16 before final
+  background-authorization-refresh refinement `target/app-backups/20261030T145216.ZVUEfX`.
+- Actual GUI **PID 48711**, 2026-10-30: **auto** 14:52:16, Screen/Accessibility true 14:52:17,
+  live Codex ready/exit 0 14:52:18. Idle/no engine. Explicit requested notification enablement found
+  **authorization=1 (denied)**, alerts style enabled. macOS will not show another permission prompt:
+  owner must enable **System Settings → Notifications → Cu → Allow notifications**. Banner delivery
+  remains unverified/blocked until that grant; persistent menu-bar Done does not need it.
+- Source remains local/uncommitted together with v15 changes. [Implementation details](TASK_STATUS_NOTIFICATIONS.md).
+
+## Version 15 automatic execution by default (historical deployment)
+
+- Corrected the actual cause of repeated Send prompts: both recent WhatsApp runs were using
+  `confirm-risky`. Native `AppModel` now defaults to `auto`, including fresh launches, and this Mac's
+  local `[safety] mode` is explicitly `auto`. No mode-selection step or action-approval popup is needed.
+  Confirmation modes remain explicit overrides; no change to hard denials, human pause or Stop.
+- Startup no longer asks for optional notification permission; ordinary auto controls hide notification
+  setup. Optional notifications are enabled only by an explicit button. Existing required macOS grants
+  are reused. The actual GUI now logs its default mode, rather than relying on an option existing.
+- Stopped the exact waiting engine for `20261030-132459-314977db` without approving Send. The blocked
+  stdin prompt needed the documented second Ctrl-C exit. Zero confirmation/action-end events followed
+  the pending Send policy decision. An unsent draft may remain; no automatic task/message replay.
+- **119 Rust tests**, strict all-target Clippy, **71 native passed/1 live metadata skipped**, nine backend,
+  three Node and signing regressions passed. Tests include the native WhatsApp Send button with zero
+  approval calls, actual default-generated `--mode auto`, fresh-instance auto and no startup
+  notification request. No live auto task, physical input test, Send or inference experiment.
+- Exact artifact `target/Cu-auto-default-staging/Cu.prepared` installed with the existing certificate.
+  App CDHash `b438d1a2b59e65c186aea8782b45936ea5d036b5`; engine unchanged from v14:
+  `902043b5cedca26bbddee4fbbc28da9929aef6e1`. Backup `target/app-backups/20261030T140553.6zArqQ`.
+- Actual GUI PID **30992**, 2026-10-30: **Native default control mode: auto** at **14:05:54**;
+  Screen/Accessibility true at **14:05:54**, Codex ready/exit 0 at **14:05:55**. Notifications unavailable
+  but not required for automatic action execution; no authorization request. App idle/no active engine.
+- Details [ALLOW_ALL.md](ALLOW_ALL.md); logs `target/auto-default-{rust-tests,clippy,native-tests,
+  backend-tests,node-tests,signing-tests,build,install,gui-readiness}.log`.
+
+## Version 14 opt-in Allow all actions (historical deployment; defaults superseded by version 15)
 
 - **Control → Allow all actions** explicitly selects engine `auto` for tasks started while selected.
   Send/delete/pay/command/sensitive-input approvals and provider-check prompts are skipped. No extra
@@ -70,7 +121,7 @@ Milestones from HANDOFF.md §17. Last updated 2026-10-30.
   action, desktop/email task replay, physical input or helper inference was performed.
 - Details: [APPROVAL_NOTIFICATIONS.md](APPROVAL_NOTIFICATIONS.md).
 
-## Version 11 hybrid helpers (retained in current version 14; public synthetic smoke passed)
+## Version 11 hybrid helpers (retained in current version 15; public synthetic smoke passed)
 
 - Fixed Luna-medium still plans desktop actions; argument-free standalone capabilities dispatch
   public-brief-only research to Parallel and content-free role/boolean metadata to Jev, only as needed.
@@ -94,9 +145,9 @@ Milestones from HANDOFF.md §17. Last updated 2026-10-30.
 | M2 Input primitives + CuTarget | ✅ move/click live verified; other primitives pending | Seven inert-window actions, 15 native posted events matched independently received events, single/double/right clicks. No keyboard/scroll/drag physical test. Broader tests in `live_cutarget.rs` remain ignored. |
 | M3 Coordinate mapping + mock agent loop | ✅ done (unit), ⏳ full live check | `CoordMapping`, executor, recorder, `MockProvider`; 37 agent-loop tests, including wrong-field typing guards and helper privacy/authority/approval-deadline boundaries. Live model-driven task-speed improvement remains unverified. |
 | Mobile dashboard + Codex subscription | ✅ implemented, ⏳ permissions / phone access | `cu serve`, responsive UI, private pairing, progress, confirmations, stop, preview. Persistent Codex app-server planner, ChatGPT-only auth; default routes model and reasoning every planning turn. Native control from the UI still needs Mac permissions; LAN activation is pending explicit approval. |
-| Native attached menu-bar panel | ✅ version 14 installed, ⏳ live workflow | One transient, non-detachable popover below the status icon. No separate controls window or draggable task overlay. Stage/step/input counts, approvals, stop, live auth readiness, completion findings, logs. Both grants survived a same-certificate update; see `docs/SIGNING.md`. |
+| Native attached menu-bar panel | ✅ version 15 installed, ⏳ live workflow | One transient, non-detachable popover below the status icon. No separate controls window or draggable task overlay. Stage/step/input counts, approvals, stop, live auth readiness, completion findings, logs. Both grants survived a same-certificate update; see `docs/SIGNING.md`. |
 | Dynamic OpenAI model + reasoning router | ✅ implemented and installed | Every-turn screenshot/task/outcome classifier; Luna-low / Astra-medium / Astra-high, validated catalog fallbacks and bounded reasoning. Explicit per-turn overrides, persistent planner history, UI/event metadata. Synthetic live Luna→Astra switch verified. Current operator override: fixed Luna-medium with no classifier. |
-| Completion verification + profile recovery | ✅ included in installed version 14, ⏳ live workflow | Explicit terminal states, fresh evidence-based Luna review, one bounded recovery, no consequential-action replay, accurate Needs your input UI. Version 5 was prepared only; its changes are now included in version 9. See `docs/COMPLETION.md`. |
+| Completion verification + profile recovery | ✅ included in installed version 15, ⏳ live workflow | Explicit terminal states, fresh evidence-based Luna review, one bounded recovery, no consequential-action replay, accurate Needs your input UI. Version 5 was prepared only; its changes are now included in version 9. See `docs/COMPLETION.md`. |
 | Persistent local signing | ✅ installed and live-verified | One code-signing-only Keychain certificate for app + engine, pinned designated requirements, fail-closed build/install guards. Explicitly authorized Cu-only migration/reset once; real version 7 → 8 update retained both grants without another reset/reapproval. |
 | M4 Anthropic provider | — | `cu run --provider anthropic` errors with "not implemented (M4)". |
 | M5 Safety v1 | partial | Policy/modes, hard-deny, confirmations, limits, `release_all`, cursor-delta pause, native global stop. Approval restores exact app focus and engine revalidates AX focus/target/display identity. Missing: engine event-tap watchdog/panic hook and atomic screenshot/content verification after confirmation. |

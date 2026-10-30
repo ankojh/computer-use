@@ -95,13 +95,14 @@ cargo test -p cu-providers codex_live_completion_review_without_input -- --ignor
 
 ## Deployment status (updated after persistent signing)
 
-Current installed version **14** retains version 13's private task-relevant native-app metadata to the planner and
+Current installed version **15** retains version 13's private task-relevant native-app metadata to the planner and
 fresh verifier. Unless a browser is explicitly required, a web login wall with an untried native
 route is incomplete work, not a genuine blocker. The existing one-shot completion recovery can
 inspect that route, still never after a denied or approved consequential action. A separate single
 repair of an entirely rejected, unexecuted plan preserves validation usage/latency and the same
 no-replay barrier; it cannot bypass completion evidence. See [APP_DISCOVERY_RECOVERY.md](APP_DISCOVERY_RECOVERY.md).
-Version 14 additionally offers opt-in [Allow all actions](ALLOW_ALL.md). Known risky automatic
+Version 14 introduced [Allow all actions](ALLOW_ALL.md); version 15 makes it the native default,
+including after relaunch, and explicitly selects auto in this Mac's CLI config. Known risky automatic
 input is marked before execution, including uncertain/failed posts; both completion and rejected-plan
 recovery honor that no-replay barrier even without a human approval. The selected mode does not
 waive identity, screenshot, receipt or completion requirements.

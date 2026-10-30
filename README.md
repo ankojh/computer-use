@@ -81,26 +81,31 @@ open /Applications/Cu.app
   Jev only for content-free role/boolean judgments, or neither. No automatic fan-out or private
   task/screenshot/email sharing. Bounded/cached calls, normal approvals and independent completion
   review remain. See [configuration, privacy limits and validation](docs/HYBRID.md).
-- **Task controls:** task editor, confirm-risky / confirm-all / observe modes, readiness checks,
-  activity, final answer, explicit approvals, run logs, and Quit all live in this attached panel.
-  **Allow all actions** is an explicit opt-in in Control; Critical actions only remains the default.
-  Starting closes it and restores the previous app. See [Allow all](docs/ALLOW_ALL.md).
-- **Progress strip:** current execution stage, planning step, and successfully posted input count.
-  These are host-observed counters, not a guessed completion percentage or an estimate of total work.
-- **Allow all actions (version 14):** choose **Control → Allow all actions** to skip Cu action approvals,
-  including Send, deletion, purchases and commands. No extra confirmation popup. Stop, human pause,
-  hard denials, focus checks, limits and completion verification remain; macOS permissions are still
-  required. The choice lasts while selected in this app session; relaunch defaults to Critical actions
-  only. Known automatic consequential attempts also block recovery replay. [Details](docs/ALLOW_ALL.md).
+- **Task controls:** task editor, automatic / confirm-risky / confirm-all / observe modes, readiness,
+  activity, final answer, run logs and Quit all live in the attached panel. **Allow all actions is the
+  default**, including after relaunch. Starting closes the panel and restores the previous app.
+- **Progress and completion (version 16):** the menu bar shows live stage/step and posted-input counts,
+  then persistent **Cu ✓ Done** after verified success/process exit. The attached panel shows remaining
+  work as unknown while running and zero only after verified completion—no fabricated percentage.
+  A separate completion notification opens results without approving anything. Successful tasks clear
+  the original task box; errors/stops/needs-input or a newer draft preserve it. Enable completion alerts
+  in Cu and allow notifications in macOS; Send approvals remain off. [Details](docs/TASK_STATUS_NOTIFICATIONS.md).
+- **No Cu action approvals by default (version 15):** normal task starts use **Allow all actions**, including
+  Send, deletion, purchases and commands. No per-action approval or extra opt-in popup, no reset to
+  Critical actions only on relaunch, and no automatic notification-permission request. This Mac's CLI
+  config is also explicitly `auto`. Cautious modes remain explicit choices. Stop, human pause, hard
+  denials, focus checks, limits, completion verification and macOS-required permissions remain.
+  Known automatic consequential attempts block recovery replay. [Details](docs/ALLOW_ALL.md).
 - **Native app discovery and plan repair (version 13):** task-relevant, read-only installed-app metadata
   helps the private planner check the native app before giving up at a web login screen. Strict action
   schemas and one budgeted correction of an unexecuted invalid reply retain focus/approval safeguards;
   any denied/approved input blocks automatic repair. Native WhatsApp Return/newlines are guarded as
   possible Send. The app inventory and private task/screenshots are never sent to public helpers. [Details](docs/APP_DISCOVERY_RECOVERY.md).
-- **Approvals (introduced in version 12):** **Critical actions only** is the default; routine inputs run automatically.
-  A native notification offers **Approve / Deny**, or **Resume / Stop task** after human interference.
-  Clicking its body opens the exact pending request in the attached panel, not a blanket approval.
-  Allow Cu's one-time macOS notification request; OS settings/Focus control delivery. The menu-bar
+- **Optional approvals (introduced in version 12):** select a confirmation mode explicitly if wanted;
+  version 15 defaults to no action approvals. An authorized native notification offers **Approve / Deny**
+  in confirmation modes, or **Resume / Stop task** after human interference. Clicking its body opens
+  the exact pending request, not a blanket approval. Notifications are enabled only through the explicit
+  button, never an automatic startup permission request; OS settings/Focus control delivery. The menu-bar
   `!` remains a fallback. Stale/duplicate notifications cannot control another task. Notifications
   exclude private task/typed/email contents. See [approval details](docs/APPROVAL_NOTIFICATIONS.md).
   Before releasing a response, the app closes the popover and waits up to one second for the original app's focus. The engine

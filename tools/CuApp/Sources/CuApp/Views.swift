@@ -92,11 +92,14 @@ struct MenuBarView: View {
                         }
                         Text(model.mode.detail).font(.caption).foregroundStyle(.secondary)
                         VStack(alignment: .leading, spacing: 5) {
+                            Text("Task completion notifications").font(.caption.weight(.semibold))
                             Text(model.notificationMessage).font(.caption2).foregroundStyle(.secondary)
                             HStack {
-                                Button("Enable notifications") { model.enableNotifications?() }.buttonStyle(.link)
+                                Button("Enable completion alerts") { model.enableNotifications?() }.buttonStyle(.link)
                                 Button("Notification settings", action: model.openNotificationSettings).buttonStyle(.link)
                             }.font(.caption2)
+                            Text("These alerts never enable Send approvals. Allow all actions remains the default.")
+                                .font(.caption2).foregroundStyle(.secondary)
                         }
                         Toggle("Highlight Cu’s shared cursor", isOn: $model.showAgentCursor)
                             .font(.caption)
@@ -151,6 +154,16 @@ struct MenuBarView: View {
                             }
                         }.textSelection(.enabled)
                     }
+                    if model.session.ended {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Label(model.session.verifiedSuccess ? "Done — verified" : model.session.stageLabel,
+                                  systemImage: model.session.verifiedSuccess ? "checkmark.circle.fill" : "exclamationmark.circle")
+                                .font(.headline)
+                            Text("\(model.session.step) planning steps · \(model.session.actionsExecuted) posted inputs")
+                            Text("Remaining: \(TaskStatusPresentation(session: model.session).remaining)")
+                            if let result = model.session.summary?.final_text { Text(result).textSelection(.enabled) }
+                        }.font(.callout).id("taskResult")
+                    }
                     if !model.session.activity.isEmpty {
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
@@ -170,6 +183,7 @@ struct MenuBarView: View {
                 .padding(18)
             }
             .onChange(of: model.approvalRevealNonce) { _, _ in proxy.scrollTo("pendingApproval", anchor: .top) }
+            .onChange(of: model.completionRevealNonce) { _, _ in proxy.scrollTo("taskResult", anchor: .top) }
             .onChange(of: model.session.pending?.id) { _, prompt in
                 if prompt != nil { proxy.scrollTo("pendingApproval", anchor: .top) }
             }
@@ -293,17 +307,21 @@ struct ApprovalCard: View {
 struct TaskProgressStrip: View {
     let session: Session
     var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
         HStack(spacing: 12) {
             if session.active, session.phase != .waiting, session.phase != .stopping {
                 ProgressView().controlSize(.small)
             } else {
-                Image(systemName: session.phase == .done ? "checkmark.circle.fill" : "circle.dotted")
+                Image(systemName: session.verifiedSuccess ? "checkmark.circle.fill" : "circle.dotted")
                     .foregroundStyle(accent)
             }
             Text(session.stageLabel).font(.caption.weight(.semibold)).lineLimit(1)
             Spacer(minLength: 0)
             Text("Step \(session.step)")
-            Text("\(session.actionsExecuted) input actions")
+            Text("\(session.actionsExecuted) posted inputs")
+        }
+        Text("Remaining: \(TaskStatusPresentation(session: session).remaining)")
+            .font(.caption2).foregroundStyle(.secondary)
         }
         .font(.caption).monospacedDigit()
         .padding(.horizontal, 18).padding(.vertical, 11)

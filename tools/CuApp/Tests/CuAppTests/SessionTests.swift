@@ -218,11 +218,12 @@ final class SessionTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode(CodexReadiness.self, from: Data("Logged in using ChatGPT".utf8)))
     }
 
-    func testNativeModesExposeExplicitAllowAllWithoutChangingDefaultOrder() {
-        XCTAssertEqual(ControlMode.allCases.map(\.rawValue), ["confirm-risky", "confirm-all", "observe", "auto"])
+    func testNativeModesPutAllowAllFirstAndDoNotAdvertiseCriticalRelaunchDefault() {
+        XCTAssertEqual(ControlMode.allCases.map(\.rawValue), ["auto", "confirm-risky", "confirm-all", "observe"])
         XCTAssertEqual(ControlMode.auto.title, "Allow all actions")
         XCTAssertTrue(ControlMode.auto.detail.contains("run automatically"))
         XCTAssertTrue(ControlMode.auto.detail.contains("hard denials"))
-        XCTAssertTrue(ControlMode.auto.detail.contains("relaunch defaults to Critical actions only"))
+        XCTAssertTrue(ControlMode.auto.detail.contains("Relaunch keeps this default"))
+        XCTAssertFalse(ControlMode.auto.detail.contains("relaunch defaults to Critical actions only"))
     }
 }

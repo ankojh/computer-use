@@ -82,8 +82,9 @@ final class ApprovalNotificationTests: XCTestCase {
     }
     @MainActor func testNotificationButtonsRequireAuthenticationAndDoNotOpenControlsToApprove() {
         let categories=ApprovalNotifications.categories()
-        XCTAssertEqual(categories.count,2)
-        for category in categories {
+        XCTAssertEqual(categories.count,3)
+        XCTAssertEqual(categories.first { $0.identifier == "CU_COMPLETION" }?.actions.count,0)
+        for category in categories where category.identifier != "CU_COMPLETION" {
             XCTAssertEqual(category.actions.count,2)
             for action in category.actions {
                 XCTAssertTrue(action.options.contains(.authenticationRequired))
@@ -91,10 +92,11 @@ final class ApprovalNotificationTests: XCTestCase {
             }
         }
     }
-    @MainActor func testDefaultModeIsCriticalOnlyAndStaleRevealDoesNothing() {
+    @MainActor func testDefaultModeIsAllowAllWithoutNotificationPermissionAndStaleRevealDoesNothing() {
         let model = AppModel()
-        XCTAssertEqual(model.mode,.confirmRisky)
-        XCTAssertEqual(model.mode.title,"Critical actions only")
+        XCTAssertEqual(model.mode,.auto)
+        XCTAssertEqual(model.mode.title,"Allow all actions")
+        XCTAssertFalse(ApprovalNotifications.requestsPermissionAtLaunch)
         XCTAssertFalse(model.revealApproval(runID:UUID(),promptID:1))
         XCTAssertEqual(model.approvalRevealNonce,0)
     }

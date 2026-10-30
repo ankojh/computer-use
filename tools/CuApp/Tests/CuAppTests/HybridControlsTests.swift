@@ -4,13 +4,16 @@ import XCTest
 
 @MainActor
 final class HybridControlsTests: XCTestCase {
-    func testAllowAllIsAnExplicitRunArgumentAndDoesNotChangeDefault() {
+    func testDefaultRunActuallyPassesAutoAndNewInstancesDoNotResetToCritical() {
         let model = AppModel()
-        XCTAssertEqual(model.mode, .confirmRisky)
-        let args = AppModel.taskArguments(task: "Synthetic task", mode: .auto, hybrid: false, publicBrief: "")
+        XCTAssertEqual(model.mode, .auto)
+        let args = AppModel.taskArguments(task: "Synthetic task", mode: model.mode, hybrid: false, publicBrief: "")
         let index = args.firstIndex(of: "--mode")!
         XCTAssertEqual(args[index + 1], "auto")
-        XCTAssertEqual(model.mode, .confirmRisky)
+        model.mode = .confirmRisky // Explicit safer overrides remain available.
+        let cautious = AppModel.taskArguments(task: "Synthetic task", mode: model.mode, hybrid: false, publicBrief: "")
+        XCTAssertEqual(cautious[cautious.firstIndex(of: "--mode")! + 1], "confirm-risky")
+        XCTAssertEqual(AppModel().mode, .auto) // Simulate a fresh launch's model.
     }
     func testPublicBriefIsSeparateAndNeverFilledFromPrivateTask() {
         let task = "PRIVATE_EMAIL recipient@example.com; compose only"

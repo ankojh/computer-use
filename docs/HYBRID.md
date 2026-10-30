@@ -2,7 +2,7 @@
 
 ## Deployment status
 
-Hybrid helpers were introduced and validated in version 11, and remain in the currently installed [version 14](ALLOW_ALL.md). Native app inventory is private planner/verifier context only, never helper input. The following records the version-11 deployment/smoke history, not the current app PID/hash.
+Hybrid helpers were introduced and validated in version 11, and remain in the currently installed [version 15](ALLOW_ALL.md). Native app inventory is private planner/verifier context only, never helper input. The following records the version-11 deployment/smoke history, not the current app PID/hash.
 
 Version 11 was installed at `/Applications/Cu.app` from `target/Cu-hybrid-staging/Cu.prepared`, using the existing certificate without permission resets/requests or login changes. Actual GUI PID 19874 logged both grants true at 16:29:37 and live Codex readiness true at 16:29:38 on 2026-10-29. The app is idle; no desktop task/email was rerun. Final app CDHash: `b2502f307d6c12faaffbe2739cfa4ffb27006d77`; engine CDHash: `7b91c826d665d93f706a812f63f15ad68d450617`. Previous-copy backup: `target/app-backups/20261029T162936.2HlTS4`.
 

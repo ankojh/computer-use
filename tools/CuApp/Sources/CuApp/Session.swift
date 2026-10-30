@@ -1,7 +1,7 @@
 import Foundation
 
 enum ControlMode: String, CaseIterable, Identifiable {
-    case confirmRisky = "confirm-risky", confirmAll = "confirm-all", observe, auto
+    case auto, confirmRisky = "confirm-risky", confirmAll = "confirm-all", observe
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -16,7 +16,7 @@ enum ControlMode: String, CaseIterable, Identifiable {
         case .confirmRisky: return "Routine navigation and typing run automatically. Sending, deleting, paying, publishing, sensitive input and other consequential actions still need approval. Taking over the mouse or keyboard still pauses Cu."
         case .confirmAll: return "You approve each action before your Mac is controlled."
         case .observe: return "Looks at your screen and describes actions, without posting input."
-        case .auto: return "No Cu action approvals: sending, deleting, purchases, sensitive typing and command execution run automatically. Stop, human-interference pause, hard denials, focus checks and macOS permissions still apply. Applies while selected; relaunch defaults to Critical actions only."
+        case .auto: return "Default: no Cu action approvals, including Send. Sending, deleting, purchases, sensitive typing and command execution run automatically. Relaunch keeps this default. Stop, human-interference pause, hard denials, focus checks and macOS-required permissions still apply."
         }
     }
 }
@@ -192,6 +192,8 @@ struct Session {
             || text.contains("subscription sign-in is required"))
     }
     var active: Bool { [.running, .waiting, .stopping].contains(phase) }
+    var verifiedSuccess: Bool { phase == .done && summary?.status == "done" && verification?.verdict == "verified" }
+    var ended: Bool { started != nil && !active && phase != .idle }
     var latest: String { activity.last?.text ?? "Your Mac, with you in control." }
 
     mutating func begin(task: String) {
@@ -275,13 +277,18 @@ struct Session {
             append("Task stopped.")
         } else if let summary {
             switch summary.status {
-            case "done": phase = .done
+            case "done":
+                if code == 0 { phase = .done }
+                else {
+                    phase = .error
+                    failureReason = "Engine reported completion but exited with code \(code); success is not confirmed."
+                }
             case "needs_input": phase = .needsInput
             case "aborted": phase = .aborted
             default: phase = Self.isAuthenticationError(summary.message ?? "") ? .signInNeeded : .error
             }
             append("\(summary.steps) steps · \(summary.actions_executed) actions · \(summary.wall_ms / 1000)s")
-            if phase != .done, let reason = summary.message ?? summary.final_text, !reason.isEmpty {
+            if phase != .done, let reason = failureReason ?? summary.message ?? summary.final_text, !reason.isEmpty {
                 failureReason = reason
                 append(reason)
             }

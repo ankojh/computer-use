@@ -7,9 +7,15 @@ final class AppModel: ObservableObject {
     @Published var draft = ""
     @Published var publicResearchBrief = ""
     @Published var useHybridHelpers = true
-    @Published var mode: ControlMode = .confirmRisky
+    @Published var mode: ControlMode = .auto
     @Published private(set) var approvalRevealNonce: UInt64 = 0
-    @Published var notificationMessage = "Approval notifications are being checked…"
+    @Published var notificationMessage = "Task notifications are being checked…"
+    @Published private(set) var completionRevealNonce: UInt64 = 0
+    func revealCompletion(runID: UUID) -> Bool {
+        guard session.id == runID, session.ended else { return false }
+        completionRevealNonce &+= 1
+        return true
+    }
     var enableNotifications: (() -> Void)?
     func revealApproval(runID: UUID, promptID: UInt64) -> Bool {
         guard session.id == runID, session.phase == .waiting, session.pending?.id == promptID else { return false }
@@ -47,6 +53,12 @@ final class AppModel: ObservableObject {
     private var deadline: Timer?
     private var eventStream = EngineEventStream()
     private var errorBuffer = Data()
+
+    init() {
+        let defaultMode = mode.rawValue
+        Logger(subsystem: "dev.ankojh.cu", category: "ControlMode")
+            .notice("Native default control mode: \(defaultMode, privacy: .public)")
+    }
 
     var engineURL: URL? { Bundle.main.url(forResource: "cu-engine", withExtension: nil) }
     var environment: [String: String] {
@@ -218,12 +230,15 @@ final class AppModel: ObservableObject {
                     self.errorBuffer.append(data)
                     if self.errorBuffer.count > 8000 { self.errorBuffer = self.errorBuffer.suffix(8000) }
                 }, completion: { [weak self] code in
-                    guard let self, self.session.id == runID else { return }
+                    guard let self, self.session.id == runID, self.session.active else { return }
                     self.deadline?.invalidate()
                     self.deadline = nil
                     self.process = nil
                     self.session.finish(runID: runID, code: code,
                                         error: String(decoding: self.errorBuffer, as: UTF8.self).trimmingCharacters(in: .whitespacesAndNewlines))
+                    if TaskInputCompletion.shouldClear(session: self.session, runID: runID, draft: self.draft) {
+                        self.draft = ""
+                    }
                     if self.session.phase == .signInNeeded {
                         self.codexReady = false
                         self.codexMessage = self.session.failureReason ?? "Run codex login to sign in again."

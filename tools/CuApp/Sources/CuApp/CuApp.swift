@@ -123,10 +123,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                         self.model.approve(runID: runID, promptID: promptID, approved: approved)
                     }
                 }
+                notices.onCompletionOpen = { [weak self] runID in
+                    guard let self, self.model.revealCompletion(runID: runID) else { return }
+                    self.statusPanel.show()
+                }
                 approvalNotifications = notices
                 model.enableNotifications = { [weak notices] in notices?.requestPermission() }
                 notices.update(model.session)
                 notices.prepare()
+                // Explicitly authorized notification enablement, not an action approval.
+                if CommandLine.arguments.contains("--enable-completion-notifications") { notices.requestPermission() }
             }
             permissionTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
                 Task { @MainActor in
@@ -188,13 +194,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let workspaceObserver { NSWorkspace.shared.notificationCenter.removeObserver(workspaceObserver) }
     }
     private func updateStatus(_ session: Session) {
-        let problem = [.error, .signInNeeded, .needsInput].contains(session.phase)
-        let symbol = session.pending != nil ? "hand.raised.fill" : problem ? "exclamationmark.circle" : session.active ? "sparkles" : "cursorarrow.rays"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Cu: \(session.stageLabel)")
+        let presentation = TaskStatusPresentation(session: session)
+        let image = NSImage(systemSymbolName: presentation.symbol, accessibilityDescription: presentation.tooltip)
         image?.isTemplate = true
         statusPanel.item.button?.image = image
-        statusPanel.item.button?.title = session.pending != nil ? " !" : ""
-        statusPanel.item.button?.toolTip = "Cu — \(session.stageLabel) · Step \(session.step) · \(session.actionsExecuted) input actions"
+        statusPanel.item.button?.title = presentation.title
+        statusPanel.item.button?.font = .monospacedDigitSystemFont(ofSize: 11, weight: .medium)
+        statusPanel.item.button?.toolTip = presentation.tooltip
     }
     /// Accessory apps still need a responder-chain Edit menu for the task editor.
     private func installMainMenu() {
